@@ -9,6 +9,8 @@
 class USpringArmComponent;
 class UCameraComponent;
 
+struct FInputActionValue;
+
 UCLASS()
 class NBCCH3_5_API AMyCharacter : public ACharacter
 {
@@ -22,18 +24,38 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	protected:
-	
+protected:
+	// 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<USpringArmComponent> SpringArmComp;
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> CameraComp;
+	
+	//스프린트 관련 멤버변수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float NormalSpeed; // 기본 걷기 속도
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float SprintSpeedMultiplier;  // 달리기 정도
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	float SprintSpeed; //달리기 속도
+	
+	UFUNCTION()
+	void Move(const FInputActionValue& value);
+	UFUNCTION()
+	void StartJump(const FInputActionValue& value);
+	UFUNCTION()
+	void StopJump(const FInputActionValue& value);
+	UFUNCTION()
+	void Look(const FInputActionValue& value);
+	UFUNCTION()
+	void StartSprint(const FInputActionValue& value);
+	UFUNCTION()
+	void StopSprint(const FInputActionValue& value);
+	
 };
