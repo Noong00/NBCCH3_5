@@ -3,39 +3,58 @@
 
 #include "BaseItem.h"
 
+#include "Components/SphereComponent.h"
+
 // Sets default values
 ABaseItem::ABaseItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
-}
-
-// Called when the game starts or when spawned
-void ABaseItem::BeginPlay()
-{
-	Super::BeginPlay();
 	
+	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
+	SetRootComponent(Scene);
+	
+	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+	Collision->SetCollisionProfileName(TEXT("OverlapAllDynamic")); //오버랩 탐지하는 프로파일
+	Collision->SetupAttachment(Scene);
+	
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	StaticMesh->SetupAttachment(Collision);
+	
+	// Overlap 이벤트 바인딩 (플레이어 오버랩 시 OnItemOverlap 함수 호출)
+	Collision->OnComponentBeginOverlap.AddDynamic(this, &ABaseItem::OnItemOverlap);
+	Collision->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnItemEndOverlap);
 }
 
-// Called every frame
-void ABaseItem::Tick(float DeltaTime)
+void ABaseItem::OnItemOverlap(
+			UPrimitiveComponent* OverlappedComp,
+			AActor* OtherActor, 
+			UPrimitiveComponent* OtherComp, 
+			int32 OtherBodyIndex, 
+			bool bFromSweep, 
+			const FHitResult& SweepResult)
 {
-	Super::Tick(DeltaTime);
+	// OtherActor가 플레이어인지 확인 ("Player" 태그 활용)
+	if (OtherActor && OtherActor->ActorHasTag("Player"))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Overlap!!!")));
+		// 아이템 사용 (획득) 로직 호출
+		ActivateItem(OtherActor);
+	}
+}
 
+void ABaseItem::OnItemEndOverlap(
+			UPrimitiveComponent* OverlappedComp, 
+			AActor* OtherActor, 
+			UPrimitiveComponent* OtherComp, 
+			int32 OtherBodyIndex)
+{
 }
 
 //정의부는 자식 클래스에서 
-void ABaseItem::OnItemOverlap(AActor* OverlapActor)
-{
-}
-
-void ABaseItem::OnItemEndOverlap(AActor* OverlapActor)
-{
-}
-
 void ABaseItem::ActivateItem(AActor* Activator)
 {
+ GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Overlap!!")));
 }
 
 FName ABaseItem::GetItemType() const

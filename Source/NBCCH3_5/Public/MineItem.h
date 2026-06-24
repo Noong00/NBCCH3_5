@@ -16,7 +16,11 @@ class NBCCH3_5_API AMineItem : public ABaseItem
 	
 	public:
 	AMineItem();
-
+	
+	protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Component")
+	USphereComponent* ExplosionCollision;
+	
 	// 폭발 시간
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Mine")
 	float ExplosionDelay;
@@ -27,5 +31,8 @@ class NBCCH3_5_API AMineItem : public ABaseItem
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Mine")
 	float ExplosionDamage;
 
+	FTimerHandle ExplosionTimerHandle;
+	void Explode();
+	
 	virtual void ActivateItem(AActor* Activator) override;
 };
