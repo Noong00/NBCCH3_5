@@ -8,7 +8,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
-
+class UWidgetComponent;
 struct FInputActionValue;
 
 UCLASS()
@@ -57,5 +57,32 @@ protected:
 	void StartSprint(const FInputActionValue& value);
 	UFUNCTION()
 	void StopSprint(const FInputActionValue& value);
+	
+	//Player 체력관련
+public:
+	UFUNCTION(BlueprintPure, Category = "Health")
+	int32 GetHealth() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void AddHealth(float Amount);
+	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+	float MaxHealth;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
+	float Health;
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	virtual void OnDeath();
+
+	//데미지 받음
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
+	//체력바
+	public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	UWidgetComponent* OverheadWidget;
+	
+	protected:
+	void UpdateOverheadHP();
 	
 };

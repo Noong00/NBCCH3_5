@@ -4,8 +4,11 @@
 #include "MyCharacter.h"
 
 #include "EnhancedInputComponent.h"
+#include "MyGameState.h"
 #include "MyPlayerController.h"
 #include "Camera/CameraComponent.h"
+#include "Components/TextBlock.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -24,19 +27,29 @@ AMyCharacter::AMyCharacter()
 	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
 	CameraComp->bUsePawnControlRotation = false;
     
+    //위젯컴포
+    OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
+    OverheadWidget->SetupAttachment(RootComponent);
+    OverheadWidget->SetWidgetSpace(EWidgetSpace::Screen);
+    
     //달리기 관련 기본값
     NormalSpeed = 600.0f;
     SprintSpeedMultiplier = 1.5f;
     SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
 
     GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+    
+    // 초기 체력
+    MaxHealth = 100.0f;
+    Health = MaxHealth;
 }
 
 // Called when the game starts or when spawned
 void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+    
+    UpdateOverheadHP();
 }
 
 // Called every frame
@@ -167,5 +180,59 @@ void AMyCharacter::StopSprint(const FInputActionValue& value)
     if (GetCharacterMovement())
     {
         GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+    }
+}
+
+int32 AMyCharacter::GetHealth() const
+{
+    return Health;
+}
+
+void AMyCharacter::AddHealth(float Amount)
+{
+    Health = FMath::Clamp(Health + Amount, 0.0f, MaxHealth); //최대 체력 넘지 않도록
+    
+    UpdateOverheadHP();
+    UE_LOG(LogTemp, Log, TEXT("Health increased to: %f"), Health);
+}
+
+float AMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+    float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser); //부모제공 데미지처리 함수
+
+    Health = FMath::Clamp(Health - DamageAmount, 0.0f, MaxHealth); //최소체력 넘지 않도록
+    
+    UpdateOverheadHP();
+    UE_LOG(LogTemp, Warning, TEXT("Health decreased to: %f"), Health);
+    
+    if (Health <= 0.0f) //체력이 다 닳으면 사망
+    {
+        OnDeath();
+    }
+    
+    return ActualDamage;
+}
+
+// 사망 처리 함수
+void AMyCharacter::OnDeath()
+{
+    AMyGameState* SpartaGameState = GetWorld() ? GetWorld()->GetGameState<AMyGameState>() : nullptr;
+    if (SpartaGameState)
+    {
+        SpartaGameState->OnGameOver();
+    }
+    UE_LOG(LogTemp, Error, TEXT("Character is Dead!"));
+}
+
+void AMyCharacter::UpdateOverheadHP()
+{
+    if (!OverheadWidget) return;
+	
+    UUserWidget* OverheadWidgetInstance = OverheadWidget->GetUserWidgetObject();
+    if (!OverheadWidgetInstance) return;
+	
+    if (UTextBlock* HPText = Cast<UTextBlock>(OverheadWidgetInstance->GetWidgetFromName(TEXT("OverHeadHP"))))
+    {
+        HPText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), Health, MaxHealth)));
     }
 }

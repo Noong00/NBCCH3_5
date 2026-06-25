@@ -1,13 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MyGameModeBase.h"
+#include "MyGameMode.h"
 
 #include "MyCharacter.h"
+#include "MyGameState.h"
 #include "MyPlayerController.h"
 
-AMyGameModeBase::AMyGameModeBase()
+AMyGameMode::AMyGameMode()
 {
 	DefaultPawnClass = AMyCharacter::StaticClass();
 	PlayerControllerClass = AMyPlayerController::StaticClass();
+	GameStateClass = AMyGameState::StaticClass();
 }
