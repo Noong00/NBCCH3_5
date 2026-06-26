@@ -20,6 +20,10 @@ class NBCCH3_5_API AMineItem : public ABaseItem
 	protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Component")
 	USphereComponent* ExplosionCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Effects")
+	UParticleSystem* ExplosionParticle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Effects")
+	USoundBase* ExplosionSound;
 	
 	// 폭발 시간
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Mine")
@@ -33,6 +37,6 @@ class NBCCH3_5_API AMineItem : public ABaseItem
 
 	FTimerHandle ExplosionTimerHandle;
 	void Explode();
-	
+	bool bHasExploded;
 	virtual void ActivateItem(AActor* Activator) override;
 };
