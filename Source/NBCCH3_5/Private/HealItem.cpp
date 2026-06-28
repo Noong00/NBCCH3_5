@@ -13,6 +13,7 @@ AHealItem::AHealItem()
 
 void AHealItem::ActivateItem(AActor* Activator)
 {
+	Super::ActivateItem(Activator);
 	if (Activator && Activator->ActorHasTag("Player"))
 	{
 		// 회복 디버그 메시지

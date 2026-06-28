@@ -56,6 +56,11 @@ void ABaseItem::OnItemEndOverlap(
 //정의부는 자식 클래스에서 
 void ABaseItem::ActivateItem(AActor* Activator)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, 
+		FString::Printf(TEXT("Particle: %s"), PickupParticle ? TEXT("Valid") : TEXT("NULL")));
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, 
+		FString::Printf(TEXT("Sound: %s"), PickupSound ? TEXT("Valid") : TEXT("NULL")));
+    
 	UParticleSystemComponent* Particle = nullptr;
 	
 	if (PickupParticle)
@@ -96,7 +101,7 @@ void ABaseItem::ActivateItem(AActor* Activator)
 			false
 		);
 	}
- GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Overlap!!")));
+ //GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Overlap!!")));
 }
 
 FName ABaseItem::GetItemType() const

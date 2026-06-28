@@ -20,7 +20,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 	AActor* SpawnRandomItem();
-	
+	AActor* SpawnItem(TSubclassOf<AActor> ItemClass); //좌표에 아이템을 생성
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Spawning")
 	USceneComponent* Scene;
@@ -32,6 +32,6 @@ protected:
 	
 	FVector GetRandomPointInVolume() const; //랜덤 좌표를 리턴
 	FItemSpawnRow* GetRandomItem() const; 
-	AActor* SpawnItem(TSubclassOf<AActor> ItemClass); //좌표에 아이템을 생성
+	//AActor* SpawnItem(TSubclassOf<AActor> ItemClass); //좌표에 아이템을 생성
 
 };

@@ -8,6 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AMyPlayerController::AMyPlayerController()
 	: InputMappingContext(nullptr),
@@ -47,6 +48,15 @@ void AMyPlayerController::BeginPlay()
 	if (CurrentMapName.Contains("MenuLevel"))
 	{
 		ShowMainMenu(false);
+	}
+	else
+	{
+		// 👉 게임 레벨일 때만 시작
+		AMyGameState* GS = GetWorld()->GetGameState<AMyGameState>();
+		if (GS)
+		{
+			GS->StartLevel();
+		}
 	}
 
 	// // HUD 위젯 생성 및 표시
@@ -129,6 +139,17 @@ void AMyPlayerController::ShowMainMenu(bool bIsRestart)
 					));
 				}
 			}
+			if (UTextBlock* TitleText = Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName(TEXT("CatchCoinTitle"))))
+			{
+				if (bIsRestart)
+				{
+					TitleText->SetVisibility(ESlateVisibility::Hidden);
+				}
+				else
+				{
+					TitleText->SetVisibility(ESlateVisibility::Visible);
+				}
+			}
 		}
 	}
 }
@@ -182,4 +203,11 @@ void AMyPlayerController::StartGame()
 
 	UGameplayStatics::OpenLevel(GetWorld(), FName("BasicLevel"));
 	SetPause(false);
+	
+	
+}
+
+void AMyPlayerController::EndGame()
+{
+	UKismetSystemLibrary::QuitGame(GetWorld(),this,EQuitPreference::Quit,false);
 }

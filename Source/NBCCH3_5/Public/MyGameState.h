@@ -28,15 +28,27 @@ public:
 	// 플레이어가 수집한 코인 개수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coin")
 	int32 CollectedCoinCount;
-	// 각 레벨이 유지되는 시간 (초 단위)
+	// 첫레벨 첫웨이브에 주어지는 시간
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level")
-	float LevelDuration;
+	float FirstLevelFirstWaveDuration;
 	// 현재 진행 중인 레벨 인덱스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level")
 	int32 CurrentLevelIndex;
 	// 전체 레벨의 개수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level")
 	int32 MaxLevels;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Wave")
+	int32 CurrentWaveIndex = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Wave")
+	int32 MaxWaveCount = 3;
+	
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<AActor>> CoinClass;
+	UPROPERTY()
+	TArray<AActor*> SpawnedItems; //스폰된 아이템 담 웨이브 전에 삭제하기 위한 배열
+	
+	bool bGameStarted = false;
+	
 	// 실제 레벨 맵 이름 배열. 여기 있는 인덱스를 차례대로 연동
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Level")
 	TArray<FName> LevelMapNames;
@@ -54,12 +66,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	void OnGameOver();
 	
+	void StartWave();
 	// 레벨을 시작할 때, 아이템 스폰 및 타이머 설정
 	void StartLevel();
 	// 레벨 제한 시간이 만료되었을 때 호출
-	void OnLevelTimeUp();
+	void OnWaveTimeUp();
 	// 코인을 주웠을 때 호출
 	void OnCoinCollected();
+	void EndWave();
 	// 레벨을 강제 종료하고 다음 레벨로 이동
 	void EndLevel();
 	

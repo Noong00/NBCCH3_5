@@ -13,6 +13,7 @@ ACoinItem::ACoinItem()
 
 void ACoinItem::ActivateItem(AActor* Activator)
 {
+	Super::ActivateItem(Activator);
 	if (Activator && Activator->ActorHasTag("Player")) //플레이어인지 태그로 확인
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Player gained %d points!"), PointValue));

@@ -7,6 +7,7 @@
 #include "MyGameState.h"
 #include "MyPlayerController.h"
 #include "Camera/CameraComponent.h"
+#include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -188,6 +189,11 @@ int32 AMyCharacter::GetHealth() const
     return Health;
 }
 
+int32 AMyCharacter::GetMaxHealth() const
+{
+    return MaxHealth;
+}
+
 void AMyCharacter::AddHealth(float Amount)
 {
     Health = FMath::Clamp(Health + Amount, 0.0f, MaxHealth); //최대 체력 넘지 않도록
@@ -231,8 +237,9 @@ void AMyCharacter::UpdateOverheadHP()
     UUserWidget* OverheadWidgetInstance = OverheadWidget->GetUserWidgetObject();
     if (!OverheadWidgetInstance) return;
 	
-    if (UTextBlock* HPText = Cast<UTextBlock>(OverheadWidgetInstance->GetWidgetFromName(TEXT("OverHeadHP"))))
+    if (UProgressBar* HPBar = Cast<UProgressBar>(OverheadWidgetInstance->GetWidgetFromName(TEXT("ProgressBar"))))
     {
-        HPText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), Health, MaxHealth)));
+        float Percent = FMath::Clamp(Health / MaxHealth, 0.0f, 1.0f);
+        HPBar->SetPercent(Percent);
     }
 }

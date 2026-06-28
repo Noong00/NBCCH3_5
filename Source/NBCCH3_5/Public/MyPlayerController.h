@@ -60,6 +60,8 @@ public:
 	// 게임 시작
 	UFUNCTION(BlueprintCallable, Category = "Menu")
 	void StartGame();
+	UFUNCTION(BlueprintCallable, Category = "Menu")
+	void EndGame();
 	
 	protected:
 	

@@ -24,6 +24,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameData")
 	int32 CurrentLevelIndex; //현재 레벨 (맵 전환 시에도 살리려면 여기에 복제
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameData")
+	int32 CurrentWaveIndex; //현재 웨이브 (맵 전환 시에도 살리려면 여기에 복제
+	
 	UFUNCTION(BlueprintCallable, Category = "GameData")
 	void AddToScore(int32 Amount);
 };
