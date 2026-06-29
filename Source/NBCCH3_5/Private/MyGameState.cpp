@@ -114,28 +114,28 @@ void AMyGameState::StartWave()
 	int32 RandomItemCount = 10 + ((CurrentLevelIndex * 3) + CurrentWaveIndex) * 10;;
 	
 	if (FoundVolumes.Num() > 0)
-	{
-		ASpawnVolume* SpawnVolume = Cast<ASpawnVolume>(FoundVolumes[0]);
-		if (SpawnVolume)
-		{
-			for (int32 i = 0; i < FixedCoinCount; i++)
-			{
-				if (CoinClass.Num() > 0)
-				{
-					int32 Index = FMath::RandRange(0, CoinClass.Num() - 1);
-					UClass* SelectedClass = CoinClass[Index];
-
-					if (SelectedClass)
-					{
-						AActor* SpawnedCoin = SpawnVolume->SpawnItem(SelectedClass);
-						if (SpawnedCoin)
-						{
-							SpawnedCoinCount++;
-							SpawnedItems.Add(SpawnedCoin);
-						}
-					}
-				}
-			}
+             	{
+             		ASpawnVolume* SpawnVolume = Cast<ASpawnVolume>(FoundVolumes[0]);
+             		if (SpawnVolume)
+             		{
+             			for (int32 i = 0; i < FixedCoinCount; i++)
+             			{
+             				if (CoinClass.Num() > 0)
+             				{
+             					int32 Index = FMath::RandRange(0, CoinClass.Num() - 1);
+             					UClass* SelectedClass = CoinClass[Index];
+             
+             					if (SelectedClass)
+             					{
+             						AActor* SpawnedCoin = SpawnVolume->SpawnItem(SelectedClass);
+             						if (SpawnedCoin)
+             						{
+             							SpawnedCoinCount++;
+             							SpawnedItems.Add(SpawnedCoin);
+             						}
+             					}
+             				}
+             			}
 			for (int32 i = 0; i < RandomItemCount; i++)
 			{
 				AActor* SpawnedRandom = SpawnVolume->SpawnRandomItem();

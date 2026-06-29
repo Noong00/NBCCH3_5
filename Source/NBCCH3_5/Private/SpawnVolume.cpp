@@ -9,16 +9,15 @@
 // Sets default values
 ASpawnVolume::ASpawnVolume()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-	
+
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	SetRootComponent(Scene);
 	SpawningBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawningBox"));
 	SpawningBox->SetupAttachment(Scene);
-	
-	ItemDataTable = nullptr;
 
+	ItemDataTable = nullptr;
 }
 
 AActor* ASpawnVolume::SpawnRandomItem()
@@ -38,7 +37,7 @@ FVector ASpawnVolume::GetRandomPointInVolume() const
 	FVector BoxExtent = SpawningBox->GetScaledBoxExtent(); //x,y,z 각 방향으로 절반 길이
 	FVector BoxOrigin = SpawningBox->GetComponentLocation(); //스폰 볼륨의 중앙
 
-	
+
 	return BoxOrigin + FVector( //x,y,z 각 방향 -extent ~ +extent
 		FMath::FRandRange(-BoxExtent.X, BoxExtent.X),
 		FMath::FRandRange(-BoxExtent.Y, BoxExtent.Y),
@@ -49,13 +48,13 @@ FVector ASpawnVolume::GetRandomPointInVolume() const
 FItemSpawnRow* ASpawnVolume::GetRandomItem() const
 {
 	if (!ItemDataTable) return nullptr; //ItemDataTable을 못찾으면 그냥 리턴 (방어코드)
-	
+
 	TArray<FItemSpawnRow*> AllRows;
 	static const FString ContextString(TEXT("ItemSpawnContext"));
 	ItemDataTable->GetAllRows(ContextString, AllRows); // 모든 행 가져오기
 
 	if (AllRows.IsEmpty()) return nullptr; //ItemDataTable이 비었으면 리턴
-	
+
 	float TotalChance = 0.0f;
 	for (const FItemSpawnRow* Row : AllRows) // AllRows 배열의 각 Row를 순회
 	{
@@ -68,7 +67,7 @@ FItemSpawnRow* ASpawnVolume::GetRandomItem() const
 	const float RandValue = FMath::FRandRange(0.0f, TotalChance); //0부터 전체 확률 사이 랜덤 값
 	float AccumulateChance = 0.0f;
 
-	for (FItemSpawnRow* Row : AllRows)// AllRows 배열의 각 Row를 순회
+	for (FItemSpawnRow* Row : AllRows) // AllRows 배열의 각 Row를 순회
 	{
 		AccumulateChance += Row->SpawnChance; //누적확률을 저장
 		if (RandValue <= AccumulateChance) // 랜덤값보다 커지면 해당 row 리턴
@@ -89,6 +88,6 @@ AActor* ASpawnVolume::SpawnItem(TSubclassOf<AActor> ItemClass)
 		GetRandomPointInVolume(),
 		FRotator::ZeroRotator
 	);
-	
+
 	return SpawnedActor;
 }
