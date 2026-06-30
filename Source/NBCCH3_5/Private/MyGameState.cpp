@@ -147,15 +147,15 @@ void AMyGameState::StartWave()
 		}
 	}
 	
-	// if (CurrentWaveIndex != 0)
-	// {
-	// 	FirstLevelFirstWaveDuration -= 10;
-	// }
-	//
-	// if (CurrentLevelIndex >= 1)
-	// {
-	// 	FirstLevelFirstWaveDuration -= 10;
-	// }
+	if (CurrentWaveIndex != 0)
+	{
+		FirstLevelFirstWaveDuration -= 10;
+	}
+	
+	if (CurrentLevelIndex >= 1)
+	{
+		FirstLevelFirstWaveDuration -= 10;
+	}
 	
 	GetWorldTimerManager().SetTimer(
 		LevelTimerHandle,
